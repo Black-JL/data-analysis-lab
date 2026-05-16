@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI for Healthcare Data Analysis — Skills Lab</title>
+<meta name="description" content="Source materials and instructions for the AI Skills Lab: Data Analysis in Healthcare.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Crimson+Pro:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1f3a5f;
+    --navy-dark: #15294a;
+    --navy-light: #345a8a;
+    --accent: #d8901c;
+    --bg: #fdfdfc;
+    --text: #1a1a1a;
+    --muted: #5a5a5a;
+    --border: #d8dde5;
+    --hint-bg: #f5f8fc;
+    --warm-bg: #fffaee;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--navy); text-decoration: none; }
+  a:hover { color: var(--navy-light); text-decoration: underline; }
+
+  .site-header {
+    background: var(--navy);
+    color: #fff;
+    padding: 1.5rem 1.25rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .site-header::after {
+    content: '';
+    position: absolute;
+    top: -30%;
+    right: -10%;
+    width: 50%;
+    height: 200%;
+    background: radial-gradient(ellipse at center, rgba(255,255,255,0.06) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .site-header .container { max-width: 820px; margin: 0 auto; position: relative; }
+  .eyebrow {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  .site-header h1 {
+    font-family: 'Crimson Pro', serif;
+    font-weight: 600;
+    font-size: clamp(1.7rem, 5vw, 2.4rem);
+    line-height: 1.1;
+    margin-bottom: 0.4rem;
+  }
+  .site-header .subtitle {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.85);
+    font-style: italic;
+  }
+
+  .container {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 0 1.25rem;
+  }
+
+  section {
+    padding: 2rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  section:last-of-type { border-bottom: none; }
+  section h2 {
+    font-family: 'Crimson Pro', serif;
+    font-weight: 600;
+    font-size: 1.6rem;
+    color: var(--navy);
+    margin-bottom: 0.6rem;
+  }
+  section h3 {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-top: 1.4rem;
+    margin-bottom: 0.5rem;
+  }
+  section p { margin-bottom: 0.75rem; font-size: 1rem; }
+  section ul, section ol { margin-left: 1.4rem; margin-bottom: 0.75rem; }
+  section li { margin-bottom: 0.3rem; }
+
+  .scenario {
+    background: #f7f8fa;
+    border-left: 4px solid var(--navy);
+    padding: 1rem 1.2rem;
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 1.25rem;
+  }
+  .scenario .label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: var(--navy);
+    margin-bottom: 0.4rem;
+  }
+  .scenario .body { font-size: 1rem; line-height: 1.6; }
+  .scenario .body strong { color: var(--navy); }
+
+  /* Exercise card — wraps each exercise in a distinct container */
+  .exercise {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem 1.5rem 1.25rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+  }
+  .exercise .exercise-tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #fff;
+    background: var(--navy);
+    padding: 0.2rem 0.6rem;
+    border-radius: 10px;
+    margin-bottom: 0.6rem;
+  }
+  .exercise h2 {
+    margin-bottom: 0.3rem;
+  }
+  .exercise .exercise-subtitle {
+    color: var(--muted);
+    font-style: italic;
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+  }
+
+  .steps {
+    list-style: none;
+    margin-left: 0;
+    counter-reset: step-counter;
+  }
+  .steps > li {
+    position: relative;
+    padding-left: 2.6rem;
+    margin-bottom: 1.1rem;
+    counter-increment: step-counter;
+  }
+  .steps > li::before {
+    content: counter(step-counter);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1.8rem;
+    height: 1.8rem;
+    line-height: 1.8rem;
+    text-align: center;
+    border-radius: 50%;
+    background: var(--navy);
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
+  .steps > li > .title {
+    display: block;
+    font-weight: 600;
+    color: var(--navy);
+    font-size: 1.02rem;
+    line-height: 1.3;
+    margin-bottom: 0.3rem;
+    margin-top: 0.05rem;
+  }
+  .steps > li p {
+    font-size: 0.95rem;
+    line-height: 1.55;
+    margin: 0.35rem 0;
+  }
+  .steps > li ul {
+    font-size: 0.92rem;
+    margin: 0.4rem 0 0.4rem 1.2rem;
+  }
+  .steps > li ul li { margin-bottom: 0.2rem; }
+  .steps > li blockquote {
+    border-left: 3px solid var(--navy-light);
+    background: var(--hint-bg);
+    padding: 0.6rem 0.85rem;
+    margin: 0.6rem 0;
+    font-style: italic;
+    font-size: 0.93rem;
+    border-radius: 0 4px 4px 0;
+    color: var(--text);
+  }
+
+  .downloads {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr));
+    gap: 0.9rem;
+    margin-top: 1rem;
+  }
+  .dl-card {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.9rem 1rem;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    text-decoration: none;
+    color: var(--text);
+    display: block;
+    background: #fff;
+  }
+  .dl-card:hover {
+    border-color: var(--navy);
+    box-shadow: 0 4px 14px rgba(31, 58, 95, 0.08);
+    text-decoration: none;
+    color: var(--text);
+  }
+  .dl-card .pill {
+    display: inline-block;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 0.15rem 0.5rem;
+    border-radius: 10px;
+    margin-bottom: 0.4rem;
+    background: #e3ebf5;
+    color: var(--navy);
+  }
+  .dl-card .name {
+    font-weight: 600;
+    color: var(--navy);
+    font-size: 0.95rem;
+    margin-bottom: 0.2rem;
+  }
+  .dl-card .desc {
+    font-size: 0.83rem;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+  .dl-card .arrow {
+    margin-top: 0.5rem;
+    font-size: 0.78rem;
+    color: var(--navy);
+    font-weight: 600;
+  }
+
+  /* Data dictionary table — used in Exercise 1 for the variable list */
+  table.data-dict {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    margin: 0.6rem 0 0.8rem;
+    background: #fff;
+  }
+  table.data-dict th, table.data-dict td {
+    border: 1px solid var(--border);
+    padding: 0.45rem 0.6rem;
+    text-align: left;
+    vertical-align: top;
+    line-height: 1.4;
+  }
+  table.data-dict th {
+    background: var(--hint-bg);
+    color: var(--navy);
+    font-weight: 600;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  table.data-dict td code {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.82rem;
+    color: var(--navy);
+    background: var(--hint-bg);
+    padding: 0.05rem 0.3rem;
+    border-radius: 3px;
+  }
+
+  .deliverables {
+    background: var(--warm-bg);
+    border-left: 4px solid var(--accent);
+    padding: 0.9rem 1.1rem;
+    border-radius: 0 6px 6px 0;
+    margin-top: 1rem;
+  }
+  .deliverables .label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: #8a6010;
+    margin-bottom: 0.4rem;
+  }
+  .deliverables ul, .deliverables ol {
+    margin: 0 0 0 1.2rem;
+    font-size: 0.93rem;
+  }
+  .deliverables li { margin-bottom: 0.2rem; }
+
+  .warning {
+    background: #fdf3f3;
+    border-left: 4px solid #b03a3a;
+    padding: 0.8rem 1rem;
+    border-radius: 0 4px 4px 0;
+    margin: 1rem 0;
+    font-size: 0.92rem;
+  }
+  .warning .label {
+    font-weight: 700;
+    color: #8a2a2a;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-right: 0.3rem;
+  }
+
+  footer.site-footer {
+    background: #f7f8fa;
+    padding: 1.5rem 1.25rem;
+    margin-top: 2rem;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  footer.site-footer strong { color: var(--navy); }
+
+  /* ===== QR scan panel (shown on the projection screen) ===== */
+  .qr-panel {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    background: linear-gradient(135deg, #f7f8fa 0%, #fcfcfd 100%);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0 0.5rem;
+  }
+  .qr-panel .qr-image {
+    flex: 0 0 auto;
+    width: 140px;
+    height: 140px;
+    border-radius: 6px;
+    background: #fff;
+    padding: 6px;
+    border: 1px solid var(--border);
+    display: block;
+  }
+  .qr-panel .qr-image img {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .qr-panel .qr-text {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .qr-panel .qr-text .label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: var(--navy);
+    margin-bottom: 0.3rem;
+  }
+  .qr-panel .qr-text h2 {
+    font-family: 'Crimson Pro', serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 0.3rem;
+    line-height: 1.15;
+  }
+  .qr-panel .qr-text .body {
+    font-size: 0.92rem;
+    color: var(--text);
+    line-height: 1.5;
+    margin-bottom: 0.5rem;
+  }
+  .qr-panel .qr-text .url {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--navy);
+    word-break: break-all;
+    background: #fff;
+    padding: 0.3rem 0.55rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    display: inline-block;
+  }
+
+  /* Already on a device? Hide the QR — they don't need it. */
+  @media (max-width: 700px) {
+    .qr-panel { display: none; }
+  }
+
+  /* Quick-jump nav for the two exercises */
+  .quick-nav {
+    display: flex;
+    gap: 0.6rem;
+    margin: 1rem 0 0;
+    flex-wrap: wrap;
+  }
+  .quick-nav a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: #fff;
+    color: var(--navy);
+    border: 1.5px solid var(--navy);
+    padding: 0.65rem 1rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: background 0.15s, color 0.15s;
+  }
+  .quick-nav a:hover {
+    background: var(--navy);
+    color: #fff;
+    text-decoration: none;
+  }
+  .quick-nav .num {
+    font-family: 'Crimson Pro', serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    opacity: 0.7;
+  }
+
+  @media (max-width: 600px) {
+    .site-header { padding: 1.2rem 1rem; }
+    section { padding: 1.5rem 0; }
+    section h2 { font-size: 1.4rem; }
+    .exercise { padding: 1.2rem 1rem 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <div class="eyebrow">AI Skills Lab — Lesson 15</div>
+    <h1>AI for Healthcare Data Analysis</h1>
+    <div class="subtitle">Two exercises. Real (fictionalized) datasets. Practice using AI to interrogate data.</div>
+  </div>
+</header>
+
+<div class="container">
+
+<!-- Scan-from-projection panel — visible on desktop, hidden on mobile -->
+<div class="qr-panel" aria-label="Scan to open this site on your own device">
+  <a href="qr-code.png" class="qr-image" target="_blank" rel="noopener">
+    <img src="qr-code.png" alt="QR code linking to this site">
+  </a>
+  <div class="qr-text">
+    <h2>Open this on your own device</h2>
+    <span class="url">https://black-jl.github.io/data-analysis-lab/</span>
+  </div>
+</div>
+
+<section id="overview">
+  <h2>Today's lab</h2>
+  <p>You will work through two healthcare data-analysis exercises using whatever AI tool you prefer (ChatGPT, Claude, Microsoft Copilot, etc.). Both exercises follow the same arc: download a dataset, clean it, ask an AI good analytical questions, and verify the answers.</p>
+
+  <div class="quick-nav">
+    <a href="#exercise-1"><span class="num">1</span> Patient Satisfaction</a>
+    <a href="#exercise-2"><span class="num">2</span> Supply Chain</a>
+  </div>
+
+  <div class="warning">
+    <span class="label">Heads up</span>
+    All data used here is <strong>fictionalized</strong> for training. Never upload real patient data, PHI, or sensitive operational data to a public AI tool.
+  </div>
+</section>
+
+<!-- =============================================================
+     EXERCISE 1 — PATIENT SATISFACTION
+     ============================================================= -->
+<section id="exercise-1">
+  <div class="exercise">
+    <span class="exercise-tag">Exercise 1</span>
+    <h2>AI-Assisted Patient Satisfaction Data Analysis</h2>
+    <div class="exercise-subtitle">Joint Outpatient Experience Survey (JOES) data — Aspen Pass Army Medical Center</div>
+
+    <div class="scenario">
+      <div class="label">The scenario</div>
+      <div class="body">
+        You are a leader at <strong>Aspen Pass Army Medical Center</strong> tasked with improving patient satisfaction. Before launching new initiatives, you need to assess the current state of satisfaction at your facility. You have obtained one year of patient satisfaction data covering both your facility and comparable Army facilities.
+      </div>
+    </div>
+
+    <h3>About the data</h3>
+    <p>The Joint Outpatient Experience Survey (JOES) combines and standardizes outpatient satisfaction surveys across Army, Navy, and Air Force medical facilities. It focuses on beneficiary experience with care received at Military Treatment Facilities (MTFs). The Defense Health Agency uses JOES data quarterly to generate "best of the best" reports ranking top-performing clinics, providers, and support staff across the Military Health System.</p>
+
+    <p>Key aspects evaluated:</p>
+    <ul>
+      <li>Appointment timeliness and scheduling efficiency</li>
+      <li>Helpfulness and professionalism of front desk personnel</li>
+      <li>Provider trust and quality of clinical communication</li>
+      <li>Thoroughness of medical history review</li>
+      <li>Access to care and appointment availability</li>
+      <li>Overall satisfaction with the visit experience</li>
+    </ul>
+
+    <p>This exercise uses <strong>fictionalized</strong> data modeled after authentic JOES datasets to provide realistic training while maintaining data privacy.</p>
+
+    <h3>Download</h3>
+    <div class="downloads">
+      <a href="files/patient-satisfaction-data.xlsx" class="dl-card" download>
+        <span class="pill">Dataset</span>
+        <div class="name">JOES Patient Satisfaction Data</div>
+        <div class="desc">One-year fictionalized JOES dataset, Aspen Pass + comparable Army facilities. Excel (.xlsx).</div>
+        <div class="arrow">Download →</div>
+      </a>
+    </div>
+
+    <h3>Steps</h3>
+    <ol class="steps">
+      <li>
+        <span class="title">Download the patient satisfaction data file</span>
+        <p>Obtain the one-year JOES dataset above. Save it somewhere accessible on your computer.</p>
+      </li>
+      <li>
+        <span class="title">Clean the data using AI</span>
+        <p>Healthcare data often contains inconsistencies, duplicate entries, missing values, and formatting errors that undermine analysis accuracy. Use your AI tool to identify and fix these issues. Keep a record of what changes you make.</p>
+      </li>
+      <li>
+        <span class="title">Upload the clean data to an AI analysis platform</span>
+        <p>Once cleaning is complete and you have verified the corrections, upload the cleaned dataset to an AI platform capable of data analysis — ChatGPT, Claude, or Microsoft Copilot with data analysis capabilities.</p>
+      </li>
+      <li>
+        <span class="title">Ask structured questions using AI prompts</span>
+        <p>Structured, context-rich prompts significantly improve AI accuracy. Try prompts like:</p>
+        <blockquote>"Compare patient satisfaction scores for Aspen Pass Army Medical Center against the average of comparable Army facilities. Identify areas where Aspen Pass performs above or below benchmark."</blockquote>
+        <blockquote>"Analyze satisfaction trends by department or clinic type. Which specialties have the highest and lowest patient satisfaction ratings?"</blockquote>
+        <blockquote>"Identify the top three factors contributing to patient dissatisfaction at Aspen Pass based on survey responses."</blockquote>
+        <blockquote>"Calculate the percentage of patients rating overall satisfaction as excellent, good, fair, or poor for Aspen Pass versus comparator facilities."</blockquote>
+        <p>Effective prompts specify the analytical goal, the desired output format, and the relevant context.</p>
+      </li>
+      <li>
+        <span class="title">Validate the results</span>
+        <p>Don't trust AI output blindly. Validation techniques:</p>
+        <ul>
+          <li>Verify data completeness — are all records and fields accounted for?</li>
+          <li>Cross-reference AI calculations with manual spot-checks of source data</li>
+          <li>Check that findings align logically across different analytical queries</li>
+          <li>Compare AI insights against known benchmarks or expected patterns</li>
+        </ul>
+        <p>Never rely solely on AI output for clinical or operational decisions without human verification.</p>
+      </li>
+    </ol>
+
+    <h3>Data dictionary</h3>
+    <table class="data-dict">
+      <thead>
+        <tr><th>Variable</th><th>Type</th><th>Label</th><th>JOES Question / Meaning</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>SEX</code></td><td>Categorical</td><td>Patient Sex</td><td>Patient sex/gender identifier</td></tr>
+        <tr><td><code>MEPRS4</code></td><td>Categorical</td><td>MEPRS Clinic Code</td><td>Medical Expense and Performance Reporting System (MEPRS) clinic/service code</td></tr>
+        <tr><td><code>CLINIC_NAME</code></td><td>Text</td><td>Clinic Name</td><td>Name of the clinic or outpatient service</td></tr>
+        <tr><td><code>BENCAT</code></td><td>Categorical</td><td>Beneficiary Category</td><td>Military beneficiary category of patient</td></tr>
+        <tr><td><code>PATAGE</code></td><td>Numeric</td><td>Patient Age</td><td>Patient age in years</td></tr>
+        <tr><td><code>QGENERAL_1</code></td><td>Likert (1–5)</td><td>General Satisfaction #1</td><td>"Overall, how satisfied were you with your visit?"</td></tr>
+        <tr><td><code>QGENERAL_2</code></td><td>Likert (1–5)</td><td>General Satisfaction #2</td><td>"Overall, how satisfied were you with the clinic/facility?"</td></tr>
+        <tr><td><code>QVISITOEv1</code></td><td>Open-ended</td><td>Visit Comment</td><td>"Please provide comments about your visit/provider experience."</td></tr>
+        <tr><td><code>QFAC_OEv1</code></td><td>Open-ended</td><td>Facility Comment</td><td>"Please provide comments about the facility or clinic experience."</td></tr>
+        <tr><td><code>QSEEPROE</code></td><td>Open-ended</td><td>Access to Provider Comment</td><td>"Please provide comments about your ability to see your provider when needed."</td></tr>
+        <tr><td><code>facility_name</code></td><td>Text</td><td>MTF Name</td><td>Name of military treatment facility</td></tr>
+        <tr><td><code>return_date</code></td><td>Date</td><td>Survey Return Date</td><td>Date survey was submitted or returned</td></tr>
+      </tbody>
+    </table>
+
+    <h3>BENCAT codes</h3>
+    <table class="data-dict">
+      <thead><tr><th>Code</th><th>Meaning</th><th>Code</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td><code>AD</code></td><td>Active Duty</td><td><code>RETFAM</code></td><td>Retiree Family Member</td></tr>
+        <tr><td><code>ADFAM</code></td><td>Active Duty Family Member</td><td><code>DR</code></td><td>Dependent Retiree</td></tr>
+        <tr><td><code>DA</code></td><td>Dependent Adult</td><td><code>MCR</code></td><td>Medicare Eligible Retiree</td></tr>
+        <tr><td><code>DC</code></td><td>Dependent Child</td><td><code>MCRFAM</code></td><td>Medicare Eligible Retiree Family Member</td></tr>
+        <tr><td><code>RET</code></td><td>Retiree</td><td><code>RES</code></td><td>Reservist</td></tr>
+        <tr><td><code>NG</code></td><td>National Guard</td><td><code>CIV</code></td><td>Civilian</td></tr>
+        <tr><td><code>OTHER</code></td><td>Other Beneficiary Category</td><td></td><td></td></tr>
+      </tbody>
+    </table>
+
+    <div class="deliverables">
+      <div class="label">Deliverable</div>
+      <ol>
+        <li>A "clean" data file. Keep a record of the changes you made.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- =============================================================
+     EXERCISE 2 — SUPPLY CHAIN
+     ============================================================= -->
+<section id="exercise-2">
+  <div class="exercise">
+    <span class="exercise-tag">Exercise 2</span>
+    <h2>AI-Assisted Supply Chain Analysis</h2>
+    <div class="exercise-subtitle">DMLSS transaction data — Medical Logistics at WHMC/SAMMC</div>
+
+    <div class="scenario">
+      <div class="label">The scenario</div>
+      <div class="body">
+        The Base Realignment Commission (BRAC) directed all inpatient and specialty care to relocate from <strong>Wilford Hall Medical Center (WHMC)</strong> to the new <strong>San Antonio Military Medical Center (SAMMC)</strong>. The Medical Logistics Department must support both facilities during the transition.
+      </div>
+    </div>
+
+    <h3>The problem</h3>
+    <ul>
+      <li>Customer Processing Division staffing has been cut from <strong>11 to 3 personnel</strong></li>
+      <li>Same logistics mission: <strong>14 customer accounts</strong> served by 2 delivery trucks</li>
+      <li>External deliveries take half a day each — the current tempo is unsustainable</li>
+      <li>You must determine the <strong>maximum delivery interval</strong> each customer can tolerate based on their ordering patterns</li>
+    </ul>
+
+    <h3>Your task</h3>
+    <p>Using AI tools, analyze the DMLSS transaction dataset to determine each customer's consumption patterns and recommend a revised delivery schedule.</p>
+
+    <h3>About the dataset</h3>
+    <ul>
+      <li>DMLSS transactions from 14 customer accounts (<strong>one tab per customer</strong>)</li>
+      <li>Each tab represents an external customer</li>
+      <li>Deliveries to each external customer take ½ day (4 hours)</li>
+      <li><strong>26,500+</strong> line-item transactions over approximately 12 months</li>
+      <li>Fields: Item ID, Description, Date Posted, Unit Price, Quantity</li>
+    </ul>
+
+    <h3>Download</h3>
+    <div class="downloads">
+      <a href="files/medlog-supply-chain-data.xlsx" class="dl-card" download>
+        <span class="pill">Dataset</span>
+        <div class="name">DMLSS Transaction Dataset</div>
+        <div class="desc">14 tabs — one per external customer. 26,500+ line items over ~12 months. Excel (.xlsx).</div>
+        <div class="arrow">Download →</div>
+      </a>
+    </div>
+
+    <h3>Key questions to answer</h3>
+    <ol class="steps">
+      <li>
+        <span class="title">Maximum delivery interval per facility</span>
+        <p>What is the maximum delivery interval for each facility based on their ordering patterns?</p>
+      </li>
+      <li>
+        <span class="title">Can the new schedule actually be executed?</span>
+        <p>Assuming you reduce the delivery schedule to account for the average / min / max service interval for each account, does this solve your problem? Can you achieve your proposed delivery schedule given:</p>
+        <ul>
+          <li>3 personnel</li>
+          <li>5-day work week</li>
+          <li>4 hours per delivery</li>
+          <li>8-hour shifts for each employee</li>
+        </ul>
+      </li>
+      <li>
+        <span class="title">If it doesn't work, refine</span>
+        <p>If your proposed schedule doesn't solve the problem, how would you refine your analysis to ensure that the new delivery schedule is achievable?</p>
+      </li>
+    </ol>
+
+    <div class="deliverables">
+      <div class="label">Deliverables</div>
+      <ol>
+        <li>Charts showing ordering frequency by customer</li>
+        <li>Average service interval per customer account</li>
+        <li>Recommended delivery frequency reduction</li>
+        <li>Briefing slide(s) presenting your findings</li>
+      </ol>
+    </div>
+
+    <p style="margin-top: 1rem; font-size: 0.85rem; color: var(--muted); font-style: italic;">Data source: DMLSS transaction records, WHMC Lackland AFB, 2010–2011 (fictionalized for training).</p>
+  </div>
+</section>
+
+</div>
+
+<footer class="site-footer">
+  <div>All scenario data is <strong>fictionalized</strong> for instructional purposes only.</div>
+  <div style="margin-top: 0.4rem;">Fundamentals of Applied Artificial Intelligence in Health Care &middot; Lesson 15</div>
+</footer>
+
+</body>
+</html>
